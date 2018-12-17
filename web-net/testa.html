@@ -1,0 +1,264 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="author" content="http://www.softwhy.com/" />
+  <title>蚂蚁部落</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Microsoft Yahei', sans-serif;
+    }
+    html,body {
+      width: 100%;
+      height: 100%;
+      background-color: #F79999;
+    }
+    .container {
+      width: 100%;
+      height: 100%;
+      padding: 100px 100px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .numw {
+      overflow: hidden;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto;
+      border: 1px solid red;
+      background-color: #ffffff;
+      display: inline-block;
+      transition: all 0.5s;
+      transition-delay: 2s;
+    }
+    .numw:hover {
+      height: 200px;
+    }
+    .numw ul {
+      list-style: none;
+    }
+    .numw li {
+      width: 98px;
+      height: 98px;
+      font-size: 100px;
+      text-align: center;
+      line-height: 98px;
+      color: #62AB3F;
+    }
+    @keyframes circle1 {
+      0% {
+        transform: translateY(0px);
+      }
+      100% {
+        transform: translateY(-1960px);
+      }
+    }
+    @keyframes circle2 {
+      0% {
+        transform: translateY(0px);
+      }
+      100% {
+        transform: translateY(-2450px);
+      }
+    }
+    @keyframes circle3 {
+      0% {
+        transform: translateY(0px);
+      }
+      100% {
+        transform: translateY(-3920px);
+      }
+    }
+    .btnw {
+      margin-top: 100px;
+    }
+    .btn {
+      border: 1px solid #ffffff;
+      border-radius: 4px;
+      background-color: #ffffff;
+      color: red;
+      width: 120px;
+      height: 50px;
+      outline: none;
+      cursor: pointer;
+      font-size: 22px;
+    }
+    .btnw .btn:nth-child(2) {
+      background-color: #CECECE;
+      color: #666;
+      border: 1px solid #e2e2e2;
+    }
+  </style>
+  <script>
+    window.onload = function() {
+      var luckbtn = document.getElementsByClassName("btn")[0];
+      luckbtn.addEventListener("click", function(e) {
+        var str = Math.round(Math.random() * 1000).toString();
+
+        if (str.length == 1) {
+          str = "00" + str;
+        }
+        if (str.length == 2) {
+          str = "0" + str;
+        }
+        console.log(str);
+
+        var luckstr = str;
+        var arr = luckstr.split("");
+        var delay1 = 2,
+          delay2 = delay1 + arr[0] * 0.2,
+          delay3 = delay2 + arr[1] * 0.2;
+        var first = document.getElementsByClassName("first")[0];
+        first.style.cssText = "animation: circle1 2s ease-out";
+        first.style.transition = "all " + arr[0] * 0.15 + "s ease-out";
+        first.style.transitionDelay = "2s";
+        first.style.marginTop = -98 * arr[0] + "px";
+
+
+        var second = document.getElementsByClassName("second")[0];
+        second.style.cssText = "animation: circle2 3s ease-out";
+        second.style.transition = "all " + arr[1] * 0.15 + "s ease-out";
+        second.style.transitionDelay = "3s";
+        second.style.marginTop = -98 * arr[1] + "px";
+
+        var third = document.getElementsByClassName("third")[0];
+        third.style.cssText = "animation: circle3 4s ease-out";
+        third.style.transition = "all " + arr[2] * 0.15 + "s ease-out";
+        third.style.transitionDelay = "4s";
+        third.style.marginTop = -98 * arr[2] + "px";
+
+      });
+      var resetbtn = document.getElementsByClassName("btn")[1];
+      resetbtn.addEventListener("click", function(e) {
+        var first = document.getElementsByClassName("first")[0];
+        first.style.cssText = "";
+        first.style.transform = "";
+
+        var second = document.getElementsByClassName("second")[0];
+        second.style.cssText = "";
+        second.style.transform = "";
+
+        var third = document.getElementsByClassName("third")[0];
+        third.style.cssText = "";
+        third.style.transform = "";
+
+      });
+    }
+  </script>
+</head>
+<body>
+<div class="container">
+  <div class="wrap">
+    <div class="numw">
+      <ul class="first" style="transition-delay: 2s">
+        <li>0</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>0</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+      </ul>
+    </div>
+    <div class="numw">
+      <ul class="second">
+        <li>0</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>0</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>0</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+      </ul>
+    </div>
+    <div class="numw">
+      <ul class="third">
+        <li>0</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>0</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>0</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>0</li>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+      </ul>
+    </div>
+  </div>
+  <div class="btnw">
+    <button class="btn">抽奖</button>
+    <button class="btn">重置</button>
+  </div>
+</div>
+</body>
+</html>

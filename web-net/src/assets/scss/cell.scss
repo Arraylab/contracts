@@ -1,0 +1,10 @@
+@import "common/scss/variable.scss";
+
+$cell-width: 175px;
+$cell-space: 20px;
+$app-space: 20px;
+
+
+@function getCellsWidth($cellNum, $cell-width: 175px, $cell-space: 20px, $app-space: 20px) {
+  @return ($cell-space + $cell-width) * $cellNum +  $cell-width + 2 * $app-space;
+}
