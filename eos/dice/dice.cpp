@@ -48,7 +48,9 @@ class EOSBetDice : public eosio::contract {
 			activebets(_self, _self),
 			globalvars(_self, _self),
 			randkeys(_self, _self),
-			_global(_self, _self)
+			_global(_self, _self),
+			unstakes(_self, _self),
+			stakes(_self, _self)
 		{}
 
 		struct st_result{
@@ -460,6 +462,7 @@ class EOSBetDice : public eosio::contract {
             EOSLIB_SERIALIZE( unstaking, (owner)(amount)(request_time) )
         };
 
+		typedef eosio::multi_index< N(unstaking), unstaking> unstaking_index;
 
         /// @abi table stake
         struct stake {
@@ -471,12 +474,9 @@ class EOSBetDice : public eosio::contract {
 
             EOSLIB_SERIALIZE( stake, (owner)(balance) )
         };
-
-        typedef eosio::multi_index< N(unstaking), unstaking> unstaking_index;
+	
         typedef eosio::multi_index< N(stake), stake> stake_index;
-        
-        unstaking_index unstakes;
-		stake_index   stakes;
+
 
 		// taken from eosio.token.hpp
 		struct st_transfer {
@@ -495,6 +495,8 @@ class EOSBetDice : public eosio::contract {
 		globalvars_index	globalvars;
 		randkeys_index		randkeys;
 		tb_global 			_global;
+		unstaking_index 	unstakes;
+		stake_index   		stakes;
 
 
 		std::string name_to_string(uint64_t acct_int) const {
