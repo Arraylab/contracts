@@ -23,6 +23,8 @@ using eosio::time_point_sec;
 
 #define REVEALER N(fuckdice1234)
 #define REFUNDER N(zhaojixing12)
+#define STAKEER N(starrystarry)  // account name of stake
+
 #define EOS_SYMBOL S(4, EOS)
 #define BET_SYMBOL S(4, PLY)
 
@@ -286,9 +288,9 @@ class EOSBetDice : public eosio::contract {
             eosio_assert( quantity.is_valid(), "Invalid asset");
             eosio_assert( quantity.amount > 0, "must stake positive quantity");
 
-            auto itr = accounts.find(from);
-            if( itr == accounts.end() ) {
-                itr = accounts.emplace(_self, [&](auto& acnt){
+            auto itr = stakes.find(from);
+            if( itr == stakes.end() ) {
+                itr = stakes.emplace(_self, [&](auto& acnt){
                     acnt.owner = from;
                 })
             }
@@ -308,7 +310,7 @@ class EOSBetDice : public eosio::contract {
                 )
             ).send();
 
-            accounts.modify( itr, 0, [&]( auto& acnt ) {
+            stakes.modify( itr, 0, [&]( auto& acnt ) {
                 acnt.balance += quantity;
             });
         }
@@ -319,10 +321,10 @@ class EOSBetDice : public eosio::contract {
             eosio_assert( quantity.is_valid(), "Invalid asset");
             eosio_assert( quantity.amount > 0, "must stake positive quantity");
 
-            auto itr = accounts.find(to);
-            eosio_assert(itr != accounts.end(), "unknown account");
+            auto itr = stakes.find(to);
+            eosio_assert(itr != stakes.end(), "unknown account");
 
-            accounts.modify(itr, 0, [&](auto& acnt) {
+            stakes.modify(itr, 0, [&](auto& acnt) {
                 eosio_assert(acnt.balance >= quantity, "insufficient balance");
                 acnt.balance -= quantity;
             });
@@ -343,30 +345,34 @@ class EOSBetDice : public eosio::contract {
                 eosio::permission_level(_self, N(active)),
                 _self,
                 N(refund),
-                std::make_tuple(to)
+                std::make_tuple(
+					to,
+					quantity)
             );
             txn.delay_sec = refund_delay_sec;
             txn.send(to.value, to);
 
             if(itr->is_empty()) {
-                accounts.erase(itr);
+                stakes.erase(itr);
             }           
         }
 
-        void refund(const account_name owner) {
+        void refund(const account_name owner, const asset& quantity) {
             require_auth(owner);
 
             auto req = unstakes.find(owner);
             eosio_assert(req != unstakes.end(), "refund request not found");
             eosio_assert(req->request_time + refund_delay_sec <= time_point_sec(now()), "refund is not available yet");
 
+			memo = ""
             action(
                 permission_level{_self, N(active)},
+				// TODO replace your own token contract
                 N(eosio.token),
                 N(transfer),
                 std::make_tuple(
                     _self,
-                    to,
+                    owner,
                     quantity,
                     memo
                 )
@@ -455,21 +461,21 @@ class EOSBetDice : public eosio::contract {
         };
 
 
-        /// @abi table account i64
-        struct account {
+        /// @abi table stake i64
+        struct stake {
             account_name owner;
             asset        balance;
 
             bool is_empty() const { return !(balance.amount); }
             uint64_t primary_key() const { return owner; }
 
-            EOSLIB_SERIALIZE( account, (owner)(balance) )
+            EOSLIB_SERIALIZE( stake, (owner)(balance) )
         };
 
         typedef eosio::multi_index< N(unstaking), unstaking> unstaking_index;
-        typedef eosio::multi_index< N(account), account> account_index;
+        typedef eosio::multi_index< N(stake), stake> stake_index;
 
-        account_index   accounts;
+        stake_index   stakes;
         unstaking_index unstakes;
 
 		// taken from eosio.token.hpp
