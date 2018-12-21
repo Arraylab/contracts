@@ -295,7 +295,7 @@ class EOSBetDice : public eosio::contract {
             if( itr == stakes.end() ) {
                 itr = stakes.emplace(_self, [&](auto& acnt){
                     acnt.owner = from;
-                })
+                });
             }
 
             std::string memo = "Input ad message!";
@@ -354,7 +354,7 @@ class EOSBetDice : public eosio::contract {
 					quantity)
             );
             txn.delay_sec = refund_delay_sec;
-            txn.send(to.value, to);
+            txn.send(quantity.amount, to);
 
             if(itr->is_empty()) {
                 stakes.erase(itr);
@@ -368,7 +368,7 @@ class EOSBetDice : public eosio::contract {
             eosio_assert(req != unstakes.end(), "refund request not found");
             eosio_assert(req->request_time + refund_delay_sec <= time_point_sec(now()), "refund is not available yet");
 
-			std::string = memo = ""
+			std::string memo = "refund "
             action(
                 permission_level{_self, N(active)},
 				// TODO replace your own token contract
