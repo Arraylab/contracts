@@ -461,7 +461,7 @@ class EOSBetDice : public eosio::contract {
         };
 
 
-        /// @abi table stake i64
+        /// @abi table stake
         struct stake {
             account_name owner;
             asset        balance;
@@ -474,9 +474,9 @@ class EOSBetDice : public eosio::contract {
 
         typedef eosio::multi_index< N(unstaking), unstaking> unstaking_index;
         typedef eosio::multi_index< N(stake), stake> stake_index;
-
-        stake_index   stakes;
+        
         unstaking_index unstakes;
+		stake_index   stakes;
 
 		// taken from eosio.token.hpp
 		struct st_transfer {
