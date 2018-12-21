@@ -283,6 +283,7 @@ class EOSBetDice : public eosio::contract {
 			activebets.erase(activebets_itr);
 		}
 
+		// @abi action
 		void stake(const account_name from, const asset& quantity) {
 
             require_auth(from);
@@ -317,6 +318,7 @@ class EOSBetDice : public eosio::contract {
             });
         }
 
+		// @abi action
         void unstake(const account_name to, const asset& quantity) {
             require_auth(to);
 
@@ -335,7 +337,7 @@ class EOSBetDice : public eosio::contract {
             if(req_itr == unstakes.end()) {
                 req_itr = unstakes.emplace(_self, [&](auto& acnt){
                     acnt.owner = to;
-                })
+                });
             }
 
             unstakes.modify(req_itr, 0, [&](auto& acnt){
@@ -366,7 +368,7 @@ class EOSBetDice : public eosio::contract {
             eosio_assert(req != unstakes.end(), "refund request not found");
             eosio_assert(req->request_time + refund_delay_sec <= time_point_sec(now()), "refund is not available yet");
 
-			memo = ""
+			std::string = memo = ""
             action(
                 permission_level{_self, N(active)},
 				// TODO replace your own token contract
@@ -464,18 +466,18 @@ class EOSBetDice : public eosio::contract {
 
 		typedef eosio::multi_index< N(unstaking), unstaking> unstaking_index;
 
-        /// @abi table stake
-        struct stake {
+        /// @abi table staking
+        struct staking {
             account_name owner;
             asset        balance;
 
-            bool is_empty() const { return !(balance.amount); }
+            bool is_empty()const { return !(balance.amount); }
             uint64_t primary_key() const { return owner; }
 
-            EOSLIB_SERIALIZE( stake, (owner)(balance) )
+            EOSLIB_SERIALIZE( staking, (owner)(balance) )
         };
 	
-        typedef eosio::multi_index< N(stake), stake> stake_index;
+        typedef eosio::multi_index< N(staking), staking> staking_index;
 
 
 		// taken from eosio.token.hpp
@@ -496,7 +498,7 @@ class EOSBetDice : public eosio::contract {
 		randkeys_index		randkeys;
 		tb_global 			_global;
 		unstaking_index 	unstakes;
-		stake_index   		stakes;
+		staking_index   	stakes;
 
 
 		std::string name_to_string(uint64_t acct_int) const {
@@ -756,4 +758,4 @@ extern "C" { \
    } \
 }
 
-EOSIO_ABI_EX( EOSBetDice, (initcontract)(newrandkey)(reveal)(transfer)(clearbet)(betreceipt)(suspendbet) )
+EOSIO_ABI_EX( EOSBetDice, (initcontract)(newrandkey)(reveal)(transfer)(clearbet)(betreceipt)(suspendbet)(stake)(unstake) )
