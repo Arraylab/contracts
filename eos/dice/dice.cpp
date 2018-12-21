@@ -368,7 +368,7 @@ class EOSBetDice : public eosio::contract {
             eosio_assert(req != unstakes.end(), "refund request not found");
             eosio_assert(req->request_time + refund_delay_sec <= time_point_sec(now()), "refund is not available yet");
 
-			std::string memo = "refund "
+			std::string memo = "refund ";
             action(
                 permission_level{_self, N(active)},
 				// TODO replace your own token contract
