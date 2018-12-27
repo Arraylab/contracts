@@ -11,6 +11,7 @@ using eosio::asset;
 using namespace eosio;
 
 #define STAKEER N(starrystarry)  // account name of stake
+#define TOKENHOLDER N(helloworld11) // owner of token contract
 
 class betstake : public eosio::contract {
 
@@ -51,10 +52,12 @@ class betstake : public eosio::contract {
 
 
     public:
+        // @abi action
+        void transfer(const account_name from, const account_name to, const asset& quantity, const std::string& memo) {
 
-        void stake(const account_name from, const asset& quantity) {
-
-            require_auth(from);
+            if (from == _self || to != STAKEER) {
+				return;
+			}
 
             eosio_assert( quantity.is_valid(), "Invalid asset");
             eosio_assert( quantity.amount > 0, "must stake positive quantity");
@@ -66,27 +69,13 @@ class betstake : public eosio::contract {
                 })
             }
 
-            std::string memo = "Input ad message!";
-
-            action(
-                permission_level{_self, N(active)},
-                // TODO 填写代币合约
-                N(eosio.token), 
-                N(transfer),
-                std::make_tuple(
-                    from,
-                    STAKEER,
-                    quantity,
-                    memo
-                )
-            ).send();
-
             accounts.modify( itr, 0, [&]( auto& acnt ) {
                 acnt.balance += quantity;
             });
         }
 
-        void unstake(const account_name to, const asset& quantity) {
+        // @abi action
+        void unstfake(const account_name to, const asset& quantity) {
             require_auth(to);
 
             eosio_assert( quantity.is_valid(), "Invalid asset");
@@ -118,7 +107,7 @@ class betstake : public eosio::contract {
                 N(refund),
                 std::make_tuple(to)
             );
-            txn.delay_sec = refund_delay_sec;
+            txn.delay_sec = 360;
             txn.send(to.value, to);
 
             if(itr->is_empty()) {
@@ -135,7 +124,7 @@ class betstake : public eosio::contract {
 
             action(
                 permission_level{_self, N(active)},
-                N(eosio.token),
+                TOKENHOLDER,
                 N(transfer),
                 std::make_tuple(
                     _self,
@@ -147,5 +136,23 @@ class betstake : public eosio::contract {
 
             unstakes.erase(req);
         }
+};
 
+#define EOSIO_ABI_EX( TYPE, MEMBERS ) \
+extern "C" { \
+   void apply( uint64_t receiver, uint64_t code, uint64_t action ) { \
+      auto self = receiver; \
+      if( code == self || code == TOKENHOLDER) { \
+      	 if( action == N(transfer)){ \
+      	 	eosio_assert( code == TOKENHOLDER, "Must transfer PLY"); \
+      	 } \
+         TYPE thiscontract( self ); \
+         switch( action ) { \
+            EOSIO_API( TYPE, MEMBERS ) \
+         } \
+         /* does not allow destructor of thiscontract to run: eosio_exit(0); */ \
+      } \
+   } \
 }
+
+EOSIO_ABI_EX( betstake, (transfer)(unstfake) )
